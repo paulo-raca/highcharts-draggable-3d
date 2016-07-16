@@ -15,6 +15,7 @@
         maxAlpha: +90,
         minBeta: -90,
         maxBeta: +90,
+        snap: 0,
         speed: null,     // Dragging speed, in º/pixel. A good speed will be calculate on the fly if not specified
         flipAxes: false  // Automatically change axis positions according to the angles
     };
@@ -39,10 +40,7 @@
                     360 / (Math.PI * Math.max(chart.plotWidth, chart.plotHeight, options3d.depth)));  // Calculate a "natural" speed, proportional to the chart's biggest dimension
 
             if (dragOptions.enabled) {
-                var mouseMoved = function (e) {
-                    //Calculate new angle
-                    var newAlpha = startAlpha + (e.pageY - eStart.pageY) * speed;
-                    var newBeta = startBeta + (eStart.pageX - e.pageX) * speed;
+                setOrientation = function(newAlpha, newBeta) {
                     newAlpha = Math.min(dragOptions.maxAlpha, Math.max(dragOptions.minAlpha, newAlpha));
                     newBeta  = Math.min(dragOptions.maxBeta,  Math.max(dragOptions.minBeta,  newBeta ));
                     options3d.alpha = newAlpha;
@@ -66,6 +64,13 @@
                         });
                     }
                     chart.redraw(false);
+                }
+                
+                var mouseMoved = function (e) {
+                    //Calculate new angle
+                    var newAlpha = startAlpha + (e.pageY - eStart.pageY) * speed;
+                    var newBeta = startBeta + (eStart.pageX - e.pageX) * speed;
+                    setOrientation(newAlpha, newBeta);
                 };
                 
                 var mouseReleased = function (e) {
@@ -73,6 +78,13 @@
                     H.removeEvent(document, 'touchdrag', mouseMoved);
                     H.removeEvent(document, 'mouseup',   mouseReleased);
                     H.removeEvent(document, 'touchend',  mouseReleased);
+                    
+                    debugger;
+                    if (dragOptions.snap) {
+                        var snapAlpha = Math.round(options3d.alpha / dragOptions.snap) * dragOptions.snap;
+                        var snapBeta  = Math.round(options3d.beta / dragOptions.snap) * dragOptions.snap;
+                        setOrientation(snapAlpha, snapBeta);
+                    }
                 };
                 
                 H.addEvent(document, 'mousemove', mouseMoved);

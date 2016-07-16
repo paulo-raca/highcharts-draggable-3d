@@ -1,9 +1,9 @@
 {
     "name": "draggable-3d",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "title": "Highcharts Draggable 3D Rotation",
     "demo": [
-        "http://jsfiddle.net/paulo_raca/d7rvpgvw/"
+        "http://jsfiddle.net/paulo_raca/n5p9poxc/"
     ],
     "author": {
         "name": "Paulo Costa",
