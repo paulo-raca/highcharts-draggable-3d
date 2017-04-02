@@ -38,7 +38,7 @@
                 startBeta = options3d.beta,
                 speed = H.pick(  // degree/pixel - higher is more sensitive
                     dragOptions.speed, 
-                    360 / (Math.PI * Math.max(chart.plotWidth, chart.plotHeight, options3d.depth)));  // Calculate a "natural" speed, proportional to the chart's biggest dimension
+                    H.pick(dragOptions.speedScale, 1) * 360 / (Math.PI * Math.max(chart.plotWidth, chart.plotHeight, options3d.depth)));  // Calculate a "natural" speed, proportional to the chart's biggest dimension
 
             if (dragOptions.enabled) {
                 setOrientation = function(newAlpha, newBeta, animate) {
