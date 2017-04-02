@@ -102,7 +102,7 @@
                 H.addEvent(document, 'touchend',  mouseReleased);
             }
         }
-        H.addEvent(document, 'mousedown', mouseDown);
-        H.addEvent(document, 'touchstart', mouseDown);
+        H.addEvent(chart.container, 'mousedown', mouseDown);
+        H.addEvent(chart.container, 'touchstart', mouseDown);
     });
 }(Highcharts));
