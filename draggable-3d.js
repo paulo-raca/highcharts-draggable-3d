@@ -89,8 +89,9 @@
 
 					mouseMoved = function (e) {
 						//Calculate new angle
-						var newAlpha = startAlpha + (e.pageY - eStart.pageY) * speed;
-						var newBeta = startBeta + (eStart.pageX - e.pageX) * speed;
+						e = chart.pointer.normalize(e);
+						var newAlpha = startAlpha + (e.chartY - eStart.chartY) * speed;
+						var newBeta = startBeta + (eStart.chartX - e.chartX) * speed;
 						setOrientation(newAlpha, newBeta, false);
 					};
 
@@ -108,7 +109,7 @@
 					};
 
 					H.addEvent(document, "mousemove", mouseMoved);
-					H.addEvent(document, "touchdrag", mouseMoved);
+					H.addEvent(document, "touchmove", mouseMoved);
 					H.addEvent(document, "mouseup",   mouseReleased);
 					H.addEvent(document, "touchend",  mouseReleased);
 				}
