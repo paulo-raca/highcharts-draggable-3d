@@ -39,6 +39,11 @@
 
 		// Add mouse events for rotation
 		var mouseDown = function (e) {
+			//Only drag with left button
+			if (H.defined(e.button) && e.button !== 0) {
+				return;
+			}
+
 			var options3d = chart.options.chart.options3d,
 				dragOptions = options3d.drag,
 				eStart = chart.pointer.normalize(e),
