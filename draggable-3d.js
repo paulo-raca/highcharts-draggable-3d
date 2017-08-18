@@ -102,7 +102,7 @@
 
 				mouseReleased = function () {
 					H.removeEvent(document, "mousemove", mouseMoved);
-					H.removeEvent(document, "touchdrag", mouseMoved);
+					H.removeEvent(document, "touchmove", mouseMoved);
 					H.removeEvent(document, "mouseup",   mouseReleased);
 					H.removeEvent(document, "touchend",  mouseReleased);
 
