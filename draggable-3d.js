@@ -18,7 +18,7 @@
 	"use strict";
 
 	(function (H) {
-		var defaultDragOptions = {
+		H.getOptions().chart.options3d.drag = {
 			enabled: false,
 			minAlpha: -90,
 			maxAlpha:  90,
@@ -41,7 +41,7 @@
 			// Add mouse events for rotation
 			var mouseDown = function (e) {
 				var options3d = chart.options.chart.options3d,
-					dragOptions = H.merge(defaultDragOptions, options3d.drag),
+					dragOptions = options3d.drag,
 					eStart = chart.pointer.normalize(e),
 					startAlpha = options3d.alpha,
 					startBeta = options3d.beta,
