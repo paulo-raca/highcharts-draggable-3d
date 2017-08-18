@@ -2,34 +2,35 @@
  * Highcharts plugin for rotating a 3D chart by dragging.
  *
  * Author: Paulo Costa
- * Version: 1.0.0
  *
  * Usage: Set options3d.drag.enabled = true
- */
-'use strict';
- (function(factory) {
-     if (typeof module === 'object' && module.exports) {
-         module.exports = factory;
-     } else {
-         factory(Highcharts);
-     }
- }(function(Highcharts) {
-    (function (H) {
-        var addEvent = H.addEvent;
+*/
+/*global module, Highcharts, document*/
 
+(function (factory) {
+    "use strict";
+    if (typeof module === "object" && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
+    "use strict";
+
+    (function (H) {
         var defaultDragOptions = {
             enabled: false,
             minAlpha: -90,
-            maxAlpha: +90,
-            minBeta: -90,
-            maxBeta: +90,
+            maxAlpha:  90,
+            minBeta:  -90,
+            maxBeta:   90,
             snap: 0,
             animateSnap: false,
             speed: null,     // Dragging speed, in º/pixel. A good speed will be calculate on the fly if not specified
             flipAxes: false  // Automatically change axis positions according to the angles
         };
 
-        H.wrap(H.Chart.prototype, 'init', function (proceed) {
+        H.wrap(H.Chart.prototype, "init", function (proceed) {
             proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
             var chart = this;
@@ -58,7 +59,7 @@
                         if (dragOptions.flipAxes) {
                             H.each(chart.xAxis, function(axis) {
                                 var opposite = newAlpha < 0;
-                                if (opposite != axis.opposite) {
+                                if (opposite !== axis.opposite) {
                                     axis.update({
                                         opposite: opposite
                                     }, animate);
@@ -66,7 +67,7 @@
                             });
                             H.each(chart.yAxis, function(axis) {
                                 var opposite = newBeta < 0;
-                                if (opposite != axis.opposite) {
+                                if (opposite !== axis.opposite) {
                                     axis.update({
                                         opposite: opposite
                                     }, animate);
@@ -74,7 +75,7 @@
                             });
                             H.each(chart.zAxis, function(axis) {
                                 var opposite = newAlpha < 0;
-                                if (opposite != axis.opposite) {
+                                if (opposite !== axis.opposite) {
                                     axis.update({
                                         opposite: opposite
                                     }, animate);
@@ -82,20 +83,22 @@
                             });
                         }
                         chart.redraw(animate);
-                    }
+                    };
 
-                    var mouseMoved = function (e) {
+                    var mouseMoved, mouseReleased;
+
+                    mouseMoved = function (e) {
                         //Calculate new angle
                         var newAlpha = startAlpha + (e.pageY - eStart.pageY) * speed;
                         var newBeta = startBeta + (eStart.pageX - e.pageX) * speed;
                         setOrientation(newAlpha, newBeta, false);
                     };
 
-                    var mouseReleased = function (e) {
-                        H.removeEvent(document, 'mousemove', mouseMoved);
-                        H.removeEvent(document, 'touchdrag', mouseMoved);
-                        H.removeEvent(document, 'mouseup',   mouseReleased);
-                        H.removeEvent(document, 'touchend',  mouseReleased);
+                    mouseReleased = function () {
+                        H.removeEvent(document, "mousemove", mouseMoved);
+                        H.removeEvent(document, "touchdrag", mouseMoved);
+                        H.removeEvent(document, "mouseup",   mouseReleased);
+                        H.removeEvent(document, "touchend",  mouseReleased);
 
                         if (dragOptions.snap) {
                             var snapAlpha = Math.round(options3d.alpha / dragOptions.snap) * dragOptions.snap;
@@ -104,14 +107,14 @@
                         }
                     };
 
-                    H.addEvent(document, 'mousemove', mouseMoved);
-                    H.addEvent(document, 'touchdrag', mouseMoved);
-                    H.addEvent(document, 'mouseup',   mouseReleased);
-                    H.addEvent(document, 'touchend',  mouseReleased);
+                    H.addEvent(document, "mousemove", mouseMoved);
+                    H.addEvent(document, "touchdrag", mouseMoved);
+                    H.addEvent(document, "mouseup",   mouseReleased);
+                    H.addEvent(document, "touchend",  mouseReleased);
                 }
-            }
-            H.addEvent(chart.container, 'mousedown', mouseDown);
-            H.addEvent(chart.container, 'touchstart', mouseDown);
+            };
+            H.addEvent(chart.container, "mousedown", mouseDown);
+            H.addEvent(chart.container, "touchstart", mouseDown);
         });
     }(Highcharts));
 }));
