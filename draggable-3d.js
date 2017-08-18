@@ -9,6 +9,7 @@
 
 (function (factory) {
 	"use strict";
+
 	if (typeof module === "object" && module.exports) {
 		module.exports = factory;
 	} else {
@@ -34,7 +35,7 @@
 
 		var chart = this;
 		if (!chart.is3d || !chart.is3d()) {
-		return;
+			return;
 		}
 
 		// Add mouse events for rotation
