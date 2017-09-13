@@ -26,8 +26,10 @@
 		maxBeta:   90,
 		snap: 0,
 		animateSnap: false,
-		speed: null,     // Dragging speed, in º/pixel. A good speed will be calculate on the fly if not specified
-		flipAxes: false  // Automatically change axis positions according to the angles
+		speed: null,       // Dragging speed, in º/pixel. A good speed will be calculate on the fly if not specified
+		flipAxes: false,   // Automatically change axis positions according to the angles
+		beforeDrag: null,  //Callback invoked when the drag starts
+		afterDrag: null    //Callback invoked when the drag ends
 	};
 
 	H.wrap(H.Chart.prototype, "init", function (proceed) {
@@ -109,10 +111,36 @@
 					if (dragOptions.snap) {
 						var snapAlpha = Math.round(options3d.alpha / dragOptions.snap) * dragOptions.snap;
 						var snapBeta  = Math.round(options3d.beta / dragOptions.snap) * dragOptions.snap;
-						setOrientation(snapAlpha, snapBeta, dragOptions.animateSnap);
+
+						if (dragOptions.animateSnap) {
+							var callbackCalled = false;
+							setOrientation(snapAlpha, snapBeta, {
+								complete: function() {
+									if (!callbackCalled) {
+										if (dragOptions.afterDrag) {
+											dragOptions.afterDrag();
+										}
+										callbackCalled = true;
+									}
+								}
+							});
+						} else {
+							setOrientation(snapAlpha, snapBeta, false);
+							if (dragOptions.afterDrag) {
+								dragOptions.afterDrag();
+							}
+						}
+					} else {
+						if (dragOptions.afterDrag) {
+							dragOptions.afterDrag();
+						}
 					}
 				};
 
+
+				if (dragOptions.beforeDrag) {
+					dragOptions.beforeDrag();
+				}
 				H.addEvent(document, "mousemove", mouseMoved);
 				H.addEvent(document, "touchmove", mouseMoved);
 				H.addEvent(document, "mouseup",   mouseReleased);
