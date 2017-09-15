@@ -47,6 +47,11 @@
 				return;
 			}
 
+			//Don't perform dragging from a menu
+			if (chart.pointer.inClass(e.target, 'highcharts-contextbutton') || chart.pointer.inClass(e.target, 'highcharts-contextmenu')) {
+				return;
+			}
+
 			var options3d = chart.options.chart.options3d,
 				dragOptions = options3d.drag,
 				eStart = chart.pointer.normalize(e),
