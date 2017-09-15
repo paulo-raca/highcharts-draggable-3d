@@ -89,6 +89,10 @@
 							}
 						});
 					}
+
+					 //Tooltips get misplaced after rotation, so it's better to just get rid of it.
+					chart.tooltip.hide(0);
+
 					chart.redraw(animate);
 				};
 
