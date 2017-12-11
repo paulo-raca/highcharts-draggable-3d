@@ -125,12 +125,15 @@
 							var callbackCalled = false;
 							setOrientation(snapAlpha, snapBeta, {
 								complete: function() {
-									if (!callbackCalled) {
-										if (dragOptions.afterDrag) {
-											dragOptions.afterDrag();
-										}
-										callbackCalled = true;
-									}
+									//https://github.com/highcharts/highcharts/issues/7146
+									if (!this.element) // Skip no-animation callbacks
+										return;
+									if (callbackCalled) //No double-callbacks
+										return;
+
+									callbackCalled = true;
+									if (dragOptions.afterDrag)
+										dragOptions.afterDrag();
 								}
 							});
 						} else {
