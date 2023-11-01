@@ -28,5 +28,6 @@
     "homepage": "https://github.com/paulo-raca/highcharts-draggable-3d#readme",
     "dependencies": {
         "highcharts": ">=9.0.0"
-    }
+    },
+    "types": "types.d.ts"
 }
