@@ -82,7 +82,7 @@
           options3d.beta = newBeta;
 
           if (dragOptions.flipAxes) {
-            H.each(chart.xAxis, function (axis) {
+            chart.xAxis.forEach(function (axis) {
               var opposite = newAlpha < 0;
               if (opposite !== axis.opposite) {
                 axis.update(
@@ -93,7 +93,7 @@
                 );
               }
             });
-            H.each(chart.yAxis, function (axis) {
+            chart.yAxis.forEach(function (axis) {
               var opposite = newBeta < 0;
               if (opposite !== axis.opposite) {
                 axis.update(
@@ -104,7 +104,7 @@
                 );
               }
             });
-            H.each(chart.zAxis, function (axis) {
+            chart.zAxis.forEach(function (axis) {
               var opposite = newAlpha < 0;
               if (opposite !== axis.opposite) {
                 axis.update(
