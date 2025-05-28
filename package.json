@@ -4,7 +4,7 @@
     "LICENSE"
   ],
   "name": "highcharts-draggable-3d",
-  "version": "1.1.1",
+  "version": "1.2.1",
   "description": "Allows you to rotate a 3D chart dragging it with the mouse.",
   "main": "highcharts-draggable-3d.js",
   "repository": {
@@ -18,7 +18,7 @@
     "highcharts-addon"
   ],
   "demo": [
-    "https://jsfiddle.net/o7qd3Ltp/"
+    "https://jsfiddle.net/2fy5aops/"
   ],
   "author": "Paulo Costa <eu@paulo.costa.nom.br>",
   "license": "Unlicense",
