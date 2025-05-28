@@ -68,122 +68,128 @@
               Math.max(chart.plotWidth, chart.plotHeight, options3d.depth)),
         ); // Calculate a "natural" speed, proportional to the chart's biggest dimension
 
-      if (dragOptions.enabled) {
-        var setOrientation = function (newAlpha, newBeta, animate) {
-          newAlpha = Math.min(
-            dragOptions.maxAlpha,
-            Math.max(dragOptions.minAlpha, newAlpha),
-          );
-          newBeta = Math.min(
-            dragOptions.maxBeta,
-            Math.max(dragOptions.minBeta, newBeta),
-          );
-          options3d.alpha = newAlpha;
-          options3d.beta = newBeta;
+      if (!dragOptions.enabled) {
+        return;
+      }
+      if (startAlpha > 180) {
+        startAlpha -= 360;
+      }
+      if (startBeta > 180) {
+        startBeta -= 360;
+      }
 
-          if (dragOptions.flipAxes) {
-            chart.xAxis.forEach(function (axis) {
-              var opposite = newAlpha < 0;
-              if (opposite !== axis.opposite) {
-                axis.update(
-                  {
-                    opposite: opposite,
-                  },
-                  animate,
-                );
-              }
-            });
-            chart.yAxis.forEach(function (axis) {
-              var opposite = newBeta < 0;
-              if (opposite !== axis.opposite) {
-                axis.update(
-                  {
-                    opposite: opposite,
-                  },
-                  animate,
-                );
-              }
-            });
-            chart.zAxis.forEach(function (axis) {
-              var opposite = newAlpha < 0;
-              if (opposite !== axis.opposite) {
-                axis.update(
-                  {
-                    opposite: opposite,
-                  },
-                  animate,
-                );
-              }
-            });
-          }
+      chart.container.setPointerCapture(e.pointerId);
 
-          //Tooltips get misplaced after rotation, so it's better to just get rid of it.
-          chart.tooltip.hide(0);
+      var setOrientation = function (newAlpha, newBeta, animate) {
+        newAlpha = Math.min(
+          dragOptions.maxAlpha,
+          Math.max(dragOptions.minAlpha, newAlpha),
+        );
+        newBeta = Math.min(
+          dragOptions.maxBeta,
+          Math.max(dragOptions.minBeta, newBeta),
+        );
+        options3d.alpha = newAlpha;
+        options3d.beta = newBeta;
 
-          chart.redraw(animate);
-        };
-
-        var mouseMoved, mouseReleased;
-
-        mouseMoved = function (e) {
-          //Calculate new angle
-          e = chart.pointer.normalize(e);
-          var newAlpha = startAlpha + (e.chartY - eStart.chartY) * speed;
-          var newBeta = startBeta + (eStart.chartX - e.chartX) * speed;
-          setOrientation(newAlpha, newBeta, false);
-        };
-
-        mouseReleased = function () {
-          H.removeEvent(document, "mousemove", mouseMoved);
-          H.removeEvent(document, "touchmove", mouseMoved);
-          H.removeEvent(document, "mouseup", mouseReleased);
-          H.removeEvent(document, "touchend", mouseReleased);
-
-          if (dragOptions.snap) {
-            var snapAlpha =
-              Math.round(options3d.alpha / dragOptions.snap) * dragOptions.snap;
-            var snapBeta =
-              Math.round(options3d.beta / dragOptions.snap) * dragOptions.snap;
-
-            if (dragOptions.animateSnap) {
-              var callbackCalled = false;
-              setOrientation(snapAlpha, snapBeta, {
-                complete: function () {
-                  //https://github.com/highcharts/highcharts/issues/7146
-                  if (!this.element)
-                    // Skip no-animation callbacks
-                    return;
-                  if (callbackCalled)
-                    //No double-callbacks
-                    return;
-
-                  callbackCalled = true;
-                  if (dragOptions.afterDrag) dragOptions.afterDrag();
+        if (dragOptions.flipAxes) {
+          chart.xAxis.forEach(function (axis) {
+            var opposite = newAlpha < 0;
+            if (opposite !== axis.opposite) {
+              axis.update(
+                {
+                  opposite: opposite,
                 },
-              });
-            } else {
-              setOrientation(snapAlpha, snapBeta, false);
+                animate,
+              );
+            }
+          });
+          // chart.yAxis.forEach(function (axis) {
+          //   var opposite = newBeta < 0;
+          //   if (opposite !== axis.opposite) {
+          //     axis.update(
+          //       {
+          //         opposite: opposite,
+          //       },
+          //       animate,
+          //     );
+          //   }
+          // });
+          chart.zAxis.forEach(function (axis) {
+            var opposite = newAlpha < 0;
+            if (opposite !== axis.opposite) {
+              axis.update(
+                {
+                  opposite: opposite,
+                },
+                animate,
+              );
+            }
+          });
+        }
+
+        //Tooltips get misplaced after rotation, so it's better to just get rid of it.
+        chart.tooltip.hide(0);
+
+        chart.redraw(animate);
+      };
+
+      var pointerMoved, pointerReleased;
+
+      pointerMoved = function (e) {
+        //Calculate new angle
+        e = chart.pointer.normalize(e);
+        var newAlpha = startAlpha + (e.chartY - eStart.chartY) * speed;
+        var newBeta = startBeta + (eStart.chartX - e.chartX) * speed;
+        setOrientation(newAlpha, newBeta, false);
+      };
+
+      pointerReleased = function (e) {
+        chart.container.removeEventListener("pointermove", pointerMoved);
+        chart.container.removeEventListener("pointerup", pointerReleased);
+        chart.container.releasePointerCapture(e.pointerId);
+
+        e = chart.pointer.normalize(e);
+        var newAlpha = startAlpha + (e.chartY - eStart.chartY) * speed;
+        var newBeta = startBeta + (eStart.chartX - e.chartX) * speed;
+
+        if (dragOptions.snap) {
+          newAlpha = Math.round(newAlpha / dragOptions.snap) * dragOptions.snap;
+          newBeta = Math.round(newBeta / dragOptions.snap) * dragOptions.snap;
+        }
+
+        if (dragOptions.animateSnap) {
+          var callbackCalled = false;
+          setOrientation(newAlpha, newBeta, {
+            complete: function () {
+              //https://github.com/highcharts/highcharts/issues/7146
+              if (!this.element)
+                // Skip no-animation callbacks
+                return;
+              if (callbackCalled)
+                //No double-callbacks
+                return;
+
+              callbackCalled = true;
               if (dragOptions.afterDrag) {
                 dragOptions.afterDrag();
               }
-            }
-          } else {
-            if (dragOptions.afterDrag) {
-              dragOptions.afterDrag();
-            }
+            },
+          });
+        } else {
+          setOrientation(newAlpha, newBeta, false);
+          if (dragOptions.afterDrag) {
+            dragOptions.afterDrag();
           }
-        };
-
-        if (dragOptions.beforeDrag) {
-          dragOptions.beforeDrag();
         }
-        H.addEvent(document, "mousemove", mouseMoved);
-        H.addEvent(document, "touchmove", mouseMoved);
-        H.addEvent(document, "mouseup", mouseReleased);
-        H.addEvent(document, "touchend", mouseReleased);
+      };
+
+      if (dragOptions.beforeDrag) {
+        dragOptions.beforeDrag();
       }
+      chart.container.addEventListener("pointermove", pointerMoved);
+      chart.container.addEventListener("pointerup", pointerReleased);
     };
-    H.addEvent(chart.container, "mousedown", mouseDown);
-    H.addEvent(chart.container, "touchstart", mouseDown);
+    chart.container.addEventListener("pointerdown", mouseDown);
   });
 });
